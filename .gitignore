@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Large raw data (kept as symlinks, not tracked)
+data/raw/*.csv
+
+# Processed large files
+data/processed/df_full.csv
+data/processed/df_site40_merged.csv
+data/processed/df_features.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Models
+*.pkl
+*.joblib
+*.h5
+*.keras
