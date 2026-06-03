@@ -1,0 +1,31 @@
+# TCC PUC — Energy Consumption Forecast
+# Ciência de Dados e Big Data | Evandro Ribeiro Gomes Coelho
+#
+# Install: pip install -r requirements.txt
+# Python >= 3.11
+
+# ── Core ─────────────────────────────────────────────────────────────────────
+numpy>=2.4.6
+pandas>=3.0.3
+scipy>=1.14.1
+
+# ── Visualização ──────────────────────────────────────────────────────────────
+matplotlib>=3.9.3
+seaborn>=0.13.2
+
+# ── Machine Learning ─────────────────────────────────────────────────────────
+scikit-learn>=1.9.0
+xgboost>=3.0.0
+
+# ── Deep Learning ────────────────────────────────────────────────────────────
+tensorflow>=2.21.0          # LSTM (notebook 04)
+
+# ── Séries Temporais ─────────────────────────────────────────────────────────
+statsmodels>=0.14.6         # STL decomposition, ARIMA (notebooks 01, 03)
+pmdarima>=2.1.1             # auto_arima / SARIMA (notebook 03)
+
+# ── Interpretabilidade ───────────────────────────────────────────────────────
+shap>=0.51.0                # SHAP values (notebook 05)
+
+# ── Utilitários ──────────────────────────────────────────────────────────────
+joblib>=1.4.0               # persistência de modelos
