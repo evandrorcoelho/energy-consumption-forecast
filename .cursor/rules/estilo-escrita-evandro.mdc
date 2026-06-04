@@ -1,0 +1,79 @@
+---
+description: Padrões de estilo de escrita acadêmica em português de Evandro Coelho, extraídos dos TCCs de graduação (CEFET-MG, 2021). Aplicar sempre que gerar texto em português para este projeto.
+alwaysApply: true
+---
+
+# Estilo de Escrita Acadêmica — Evandro Coelho
+
+## Voz e tom
+
+- Nunca use primeira pessoa do singular ("eu", "meu"). Use sempre terceira pessoa ou construções impessoais.
+- Substitua "eu" por: "o presente estudo", "essa pesquisa", "esse trabalho", "o autor".
+- Use voz passiva ou impessoal: "torna-se necessário", "verifica-se que", "espera-se que", "pode-se considerar", "constata-se que", "identificou-se", "estudou-se".
+- O tom é formal, neutro e objetivo — sem coloquialismos, contrações ou informalidades.
+
+## Conectivos e marcadores discursivos preferidos
+
+Use os conectivos abaixo com frequência; são traços centrais do estilo:
+
+| Função | Conectivos |
+|--------|-----------|
+| Continuidade | "Ademais", "Ainda", "Ainda assim" |
+| Consequência | "Dessa forma", "Portanto", "Assim" |
+| Contraste | "Todavia", "Entretanto", "Por outro lado" |
+| Direção argumentativa | "Nesse sentido", "Diante do exposto", "A partir disso" |
+| Adição de perspectiva | "Por sua vez", "Em contrapartida" |
+| Síntese | "Em síntese", "Por fim", "Em suma" |
+| Referência a aspecto | "Com relação a", "Em relação a", "No que se refere a", "Sobre", "Conforme" |
+| Finalidade | "a fim de", "para que", "de forma que" |
+| Explicação | "ou seja", "isto é" |
+
+## Construção de orações
+
+- Orações subordinadas encadeadas com vírgula + conjunção, formando períodos longos e densos.
+  - Exemplo: "Nesse sentido, a fim de embasar o estudo de previsão do consumo energético de prédios públicos, torna-se necessário relacionar o consumo de energia desses edifícios com a situação de gestão das despesas e uso eficiente do recurso natural."
+- Ao introduzir termos técnicos em inglês, inclua a definição imediatamente no texto:
+  - Exemplo: "retrofits, termo utilizado para designar o processo de modernização de algum equipamento já considerado ultrapassado ou fora de norma"
+- Siglas são definidas na primeira menção: "Programa Nacional de Conservação de Energia Elétrica (PROCEL)".
+- Termos em inglês aparecem em itálico ou entre aspas simples na primeira ocorrência.
+
+## Integração de citações
+
+- Introdução de ideia alheia: "Segundo [Autor] (ano)," ou "Conforme [Autor] (ano),"
+- Continuação do mesmo autor: "O autor ainda complementa que:" ou "[Autor] (ano) ainda conclui:"
+- Citação direta introduzida por dois-pontos após contextualizacao: "Citando Costa (2020):"
+- Formato autor-ano entre parênteses: (d'Albuquerque, Silva, & Gomes, 2017)
+- Após bloco de citação, retoma-se a análise com "Assim," ou "Diante disso,"
+
+## Referências a figuras, tabelas e equações
+
+- "A Figura X apresenta...", "A Tabela Y mostra...", "A equação X descreve..."
+- Após descrever o conteúdo: "A partir dessa imagem, torna-se possível identificar..."
+- Nunca dizer apenas "veja a figura"; sempre interpretar o que ela mostra.
+
+## Estrutura de parágrafo
+
+1. Oração tópico que enuncia o tema.
+2. Desenvolvimento com citação de autores e exemplos concretos.
+3. Análise ou síntese própria.
+4. Frase de transição para o próximo tópico ou conclusão parcial.
+
+## Frases características (usar como modelo)
+
+- "Isso vai ao encontro com..."
+- "Isso se dá principalmente pelo..."
+- "É de competência também desse estudo..."
+- "A partir dessa motivação, estudou-se..."
+- "Espera-se que esse trabalho forneça..."
+- "De posse das informações de..."
+- "Considerando que os melhores recursos de entrada foram..."
+- "Com base no exposto..."
+- "Torna-se, portanto, justificável..."
+
+## O que evitar
+
+- Bullet points soltos sem contextualização em prosa.
+- Frases curtas e telegráficas — o estilo é de períodos elaborados.
+- Linguagem de relatório técnico informal.
+- Uso de "obviamente", "claramente", "é claro que".
+- Marcadores de IA como "Em conclusão,", "Em resumo,", "Vale ressaltar que".
