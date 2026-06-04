@@ -103,7 +103,11 @@ A base de dados utilizada nesse estudo é a *Building Sites Power Consumption*, 
 
 Conforme descrito em COELHO (2021b), "a base possui dados estruturados de energia de edifícios, medições de temperatura, distâncias entre o ponto de medição de temperatura do prédio, contagem de feriados e área construída". Essa estrutura multivariada possibilita a exploração de correlações entre o consumo energético e as condições climáticas, além da influência do calendário sobre o padrão de uso dos edifícios.
 
-A base de dados é composta por quatro arquivos principais, descritos na Tabela 1.
+A base de dados é composta por quatro arquivos principais, descritos na Tabela 1. A Figura 1 ilustra a distribuição de registros entre os 267 edifícios disponíveis, evidenciando a alta concentração de medições em poucos prédios e a linha de corte adotada para seleção dos candidatos ao estudo.
+
+![Figura 1 — Registros de energia por prédio e distribuição da quantidade de registros com limiar de 10 mil medições](figures/01_eda_fig01.png)
+
+**Figura 1 — Registros de energia por prédio (todos os 267 edifícios) e histograma com limiar de 10.000 medições. Fonte: O autor.**
 
 **Tabela 1 — Descrição dos conjuntos de dados da base *Building Sites Power Consumption***
 
@@ -176,7 +180,23 @@ A Tabela 2 descreve os vinte recursos gerados, indicando quais já estavam prese
 
 **Fonte:** O autor.
 
+A Figura 2 ilustra o resultado da codificação cíclica aplicada aos três ciclos temporais, mostrando as curvas seno e cosseno geradas para hora do dia, dia da semana e mês do ano.
+
+![Figura 2 — Encoding cíclico: hora do dia, dia da semana e mês do ano](figures/02_feature_engineering_fig01.png)
+
+**Figura 2 — Codificação cíclica via seno e cosseno para hora do dia (TCC2), dia da semana (novo) e mês do ano (novo). Fonte: O autor.**
+
 A codificação cíclica da hora do dia, já presente em COELHO (2021b) com base na metodologia de Kaleko (2017), foi estendida para os demais ciclos temporais relevantes — dia da semana e mês do ano. Conforme afirmado naquele trabalho, "esse recurso matemático permite que o algoritmo consiga realizar as interpretações que para o ser humano são lógicas, mas que para a máquina não são apresentadas com clareza nos primeiros treinos". A inclusão do dia da semana em codificação cíclica tem como objetivo que o algoritmo perceba a continuidade entre sexta-feira e segunda-feira sem o artefato de uma diferença numérica artificial de 6 para 0.
+
+A Figura 3 ilustra a aplicação das médias móveis de 6 e 24 horas sobre as duas primeiras semanas da série, evidenciando o efeito de suavização em diferentes escalas de tempo. A Figura 4 apresenta o ranking de correlação de todos os vinte recursos com a variável alvo, que orientou a interpretação da relevância relativa de cada preditor.
+
+![Figura 3 — Consumo original vs médias móveis de 6h e 24h (primeiras duas semanas)](figures/02_feature_engineering_fig02.png)
+
+**Figura 3 — Consumo energético original em comparação com as médias móveis de 6 horas e 24 horas. Fonte: O autor.**
+
+![Figura 4 — Correlação de Pearson de todos os recursos com o consumo energético (Value)](figures/02_feature_engineering_fig03.png)
+
+**Figura 4 — Ranking de correlação de Pearson dos 20 recursos preditores com a variável alvo. Fonte: O autor.**
 
 Após a geração dos recursos por operações de atraso (*lag*) e janelas móveis (*rolling*), as linhas com valores ausentes decorrentes dessas operações foram removidas por `dropna()`. Esse procedimento eliminou 363 registros (2,1% do total), resultando em uma base final de 16.632 linhas e 22 colunas (o índice de tempo, a variável alvo `Value` e os 20 recursos preditores), exportada para o arquivo `df_features.csv`. A normalização dos dados não foi aplicada na exportação, sendo realizada de forma individual dentro do *pipeline* de cada modelo, a fim de evitar vazamento de informação entre os conjuntos de treino e teste.
 
@@ -188,6 +208,12 @@ A análise exploratória dos dados (AED) foi conduzida sobre os dados integrados
 
 ### 4.1 Estatísticas descritivas do consumo energético
 
+A Figura 5 apresenta a série temporal completa do consumo energético do edifício 40, no período de julho de 2015 a novembro de 2017. Nela, é possível identificar os padrões de alta variabilidade, os gaps periódicos e a sazonalidade anual, com consumo mais elevado nos meses de inverno.
+
+![Figura 5 — Série temporal de consumo energético — SiteId 40](figures/01_eda_fig02.png)
+
+**Figura 5 — Série temporal completa de consumo energético horário do edifício 40 (jul/2015 – nov/2017). Fonte: O autor.**
+
 O edifício de referência apresenta consumo médio de 5.476,04 kWh por hora, com desvio padrão de 3.950,01 kWh. Esse alto coeficiente de variação — equivalente a 72,1% da média — indica uma série temporal com comportamento bastante heterogêneo, o que representa um desafio para modelos de previsão que assumem estacionaridade ou baixa variância residual. O intervalo mediano entre as medições é de exatamente uma hora, e 75% dos intervalos são iguais a esse valor, confirmando a regularidade da série, com exceção dos 17 gaps de 193 horas.
 
 Em relação à temperatura, a série apresenta média de 12,55 °C e desvio padrão de 8,23 °C, com amplitude entre -8 °C e 38 °C. A presença de temperaturas negativas é consistente com a localização do edifício em região de clima temperado e justifica o padrão de consumo elevado no período noturno e nos meses de inverno.
@@ -195,6 +221,12 @@ Em relação à temperatura, a série apresenta média de 12,55 °C e desvio pad
 ### 4.2 Padrões temporais de consumo
 
 A análise dos perfis médios de consumo por hora do dia, por dia da semana e por mês revelou padrões que são consistentes com o uso do edifício.
+
+A Figura 6 apresenta os três perfis médios de consumo — por hora do dia, por dia da semana e por mês do ano — que serviram de base para a decisão sobre quais recursos cíclicos incluir na etapa de engenharia de recursos.
+
+![Figura 6 — Perfis médios de consumo por hora, dia da semana e mês](figures/01_eda_fig03.png)
+
+**Figura 6 — Perfil de consumo médio por hora do dia (esquerda), dia da semana (centro) e mês do ano (direita). Fonte: O autor.**
 
 **Perfil horário.** O consumo é mais elevado nos horários noturnos, com picos na hora 23 (8.137 kWh médios) e na hora 0 (6.900 kWh), e vale mínimo nas horas 20 e 21 (em torno de 3.039 a 3.188 kWh). Esse padrão — atípico em relação a edifícios de escritório convencionais, nos quais o pico ocorre no horário comercial — justifica-se pelo uso de sistemas de aquecimento em resposta às temperaturas negativas noturnas, conforme discutido em COELHO (2021b).
 
@@ -204,13 +236,29 @@ A análise dos perfis médios de consumo por hora do dia, por dia da semana e po
 
 ### 4.3 Decomposição da série temporal
 
-A série temporal foi decomposta utilizando o método *Seasonal and Trend decomposition using Loess* (STL), com período de 24 horas e parâmetro `robust=True`, que reduz a influência de outliers na estimação das componentes. A decomposição revelou três componentes principais: tendência, sazonalidade diária e resíduo. A componente de tendência apresenta oscilações de longo prazo associadas às estações do ano, enquanto a componente sazonal captura o ciclo diurno de 24 horas, e o resíduo representa o comportamento não explicado pelas duas anteriores.
+A série temporal foi decomposta utilizando o método *Seasonal and Trend decomposition using Loess* (STL), com período de 24 horas e parâmetro `robust=True`, que reduz a influência de outliers na estimação das componentes. A Figura 7 apresenta as quatro componentes resultantes da decomposição. A decomposição revelou três componentes principais: tendência, sazonalidade diária e resíduo.
+
+![Figura 7 — Decomposição STL da série temporal do edifício 40](figures/01_eda_fig04.png)
+
+**Figura 7 — Decomposição STL da série temporal do edifício 40: série original, tendência, sazonalidade (período = 24h) e resíduo. Fonte: O autor.** A componente de tendência apresenta oscilações de longo prazo associadas às estações do ano, enquanto a componente sazonal captura o ciclo diurno de 24 horas, e o resíduo representa o comportamento não explicado pelas duas anteriores.
 
 Conforme abordado na seção 2.3.1 de COELHO (2021a), ao se realizar uma previsão das próximas ocorrências de uma série temporal "é preciso aceitar a premissa de que os valores passados possuem influência nos valores futuros". Assim, a decomposição STL serve como fundamento qualitativo para a escolha dos recursos de atraso e médias móveis na etapa de engenharia de recursos.
 
 ### 4.4 Correlações com o consumo energético
 
-A matriz de correlação de Pearson foi calculada para as variáveis disponíveis após a junção dos dados. Os resultados mostram que o fim de semana (is_weekend) apresenta a maior correlação negativa com o consumo (r = −0,448), seguido pelo dia da semana (r = −0,378) e pela temperatura (r = −0,356). A correlação negativa com a temperatura é contraintuitiva em relação a edifícios de clima quente — onde o ar-condicionado eleva o consumo no verão —, mas é esperada nesse contexto, em que o aquecimento é o principal agente de consumo e ocorre em resposta a temperaturas baixas.
+A Figura 8 apresenta a matriz de correlação de Pearson calculada para as variáveis disponíveis após a junção dos dados.
+
+![Figura 8 — Matriz de correlação de Pearson entre as variáveis do edifício 40](figures/01_eda_fig05.png)
+
+**Figura 8 — Matriz de correlação de Pearson entre energia, temperatura, hora, dia da semana, fim de semana e feriado. Fonte: O autor.**
+
+A matriz de correlação de Pearson foi calculada para as variáveis disponíveis após a junção dos dados. A Figura 9 complementa essa análise com o gráfico de dispersão entre energia e temperatura, colorido pela hora do dia, e o *boxplot* da distribuição de consumo por hora, que evidencia com maior detalhe a variabilidade intradiária.
+
+![Figura 9 — Dispersão energia vs temperatura e boxplot do consumo por hora do dia](figures/01_eda_fig06.png)
+
+**Figura 9 — Dispersão entre energia e temperatura (colorida pela hora do dia) e distribuição do consumo por hora. Fonte: O autor.**
+
+Os resultados mostram que o fim de semana (is_weekend) apresenta a maior correlação negativa com o consumo (r = −0,448), seguido pelo dia da semana (r = −0,378) e pela temperatura (r = −0,356). A correlação negativa com a temperatura é contraintuitiva em relação a edifícios de clima quente — onde o ar-condicionado eleva o consumo no verão —, mas é esperada nesse contexto, em que o aquecimento é o principal agente de consumo e ocorre em resposta a temperaturas baixas.
 
 Após a engenharia de recursos, a análise de correlação com a variável alvo revelou que o consumo no instante anterior (`energy_lag1`) apresenta r = 0,895 — o preditor de maior correlação com o consumo atual. A média móvel de seis horas (`roll_mean_6h`) apresenta r = 0,863, e o consumo em t−2 (`energy_lag2`), r = 0,778. Esses valores evidenciam que a autocorrelação de curto prazo é a principal estrutura a ser capturada pelos modelos de previsão.
 
@@ -262,6 +310,12 @@ A Tabela 3 apresenta os resultados dos modelos de linha de base sobre o conjunto
 *Avaliado sobre subconjunto de 48 horas; não comparável diretamente com os demais.
 
 **Fonte:** O autor.
+
+A Figura 10 apresenta a previsão dos modelos de linha de base sobre os primeiros sete dias do conjunto de teste, onde é possível verificar visualmente a diferença de aderência entre a MMS/MME e a Regressão Linear.
+
+![Figura 10 — Previsão dos modelos de linha de base nos primeiros 7 dias do conjunto de teste](figures/03_baseline_models_fig01.png)
+
+**Figura 10 — Comparação visual da MMS (w=24) e MME (α=0,3) no painel superior, e da Regressão Linear no painel inferior, sobre os primeiros 7 dias do conjunto de teste. Fonte: O autor.**
 
 Nesse sentido, a Regressão Linear destacou-se como o modelo de linha de base de melhor desempenho, indicando que os recursos de atraso e as codificações cíclicas da hora e do dia da semana possuem relação linear com a variável de saída suficientemente forte para justificar o uso desse modelo simples como referência.
 
@@ -326,7 +380,11 @@ No conjunto de teste, o XGBoost obteve R² = 0,99786, RMSE = 128,16 kWh, MAE = 9
 
 A *Long Short-Term Memory* (LSTM) é uma arquitetura de rede neural recorrente especialmente projetada para aprender padrões em sequências temporais (WEI et al., 2017). A implementação utilizou o framework TensorFlow 2.21.0, com arquitetura composta por uma camada LSTM de 64 unidades, seguida por uma camada de *Dropout* de 20% para regularização, uma camada densa de 32 neurônios com ativação ReLU e uma camada de saída com um neurônio. O total de parâmetros treináveis foi de 23.873.
 
-O treinamento foi realizado com o otimizador *adam*, função de perda MSE e métrica de acompanhamento MAE, por até 100 épocas com *batch size* de 128 e reserva de 10% do conjunto de treino para validação interna. O mecanismo de parada antecipada (*EarlyStopping*) com paciência de 10 épocas e restauração dos melhores pesos interrompeu o treinamento na 40ª época, com perda de validação de 7,16 × 10⁻⁵ na melhor época (24ª).
+O treinamento foi realizado com o otimizador *adam*, função de perda MSE e métrica de acompanhamento MAE, por até 100 épocas com *batch size* de 128 e reserva de 10% do conjunto de treino para validação interna. O mecanismo de parada antecipada (*EarlyStopping*) com paciência de 10 épocas e restauração dos melhores pesos interrompeu o treinamento na 40ª época, com perda de validação de 7,16 × 10⁻⁵ na melhor época (24ª). A Figura 11 apresenta a curva de aprendizado da LSTM, evidenciando a rápida convergência nas primeiras cinco épocas e a estabilização a partir da décima.
+
+![Figura 11 — Curva de aprendizado da LSTM: perda de treino e validação por época](figures/04_advanced_models_fig01.png)
+
+**Figura 11 — Curva de aprendizado da LSTM (MSE por época) para perda de treino e de validação. Parada na 40ª época; melhor peso restaurado da 24ª época. Fonte: O autor.**
 
 No conjunto de teste, a LSTM obteve R² = 0,99733, RMSE = 143,16 kWh, MAE = 104,26 kWh e MAPE = 3,715%.
 
@@ -336,7 +394,11 @@ No conjunto de teste, a LSTM obteve R² = 0,99733, RMSE = 143,16 kWh, MAE = 104,
 
 ### 6.1 Comparação geral entre os modelos
 
-A Tabela 5 apresenta os resultados consolidados de todos os modelos avaliados, ordenados pelo coeficiente de determinação R² no conjunto de teste.
+A Figura 12 apresenta o *dashboard* de comparação entre todos os modelos avaliados, com as quatro métricas dispostas em painéis separados, permitindo uma visão simultânea do desempenho relativo de cada algoritmo. A Tabela 5 apresenta os valores numéricos correspondentes, ordenados pelo coeficiente de determinação R² no conjunto de teste.
+
+![Figura 12 — Dashboard de comparação: R², RMSE, MAE e MAPE para todos os modelos](figures/05_results_comparison_fig01.png)
+
+**Figura 12 — Dashboard de comparação entre modelos de linha de base e modelos avançados, com as métricas R², RMSE, MAE e MAPE. Fonte: O autor.**
 
 **Tabela 5 — Comparação geral de todos os modelos avaliados no conjunto de teste**
 
@@ -364,9 +426,31 @@ Diante dos resultados expostos, identificam-se três grupos de desempenho distin
 
 ### 6.2 O papel determinante da engenharia de recursos
 
+A Figura 13 apresenta os gráficos de dispersão entre o valor real e o valor previsto para cada modelo, sobre o conjunto de teste completo. Nela, a linha tracejada vermelha representa a previsão ideal (y = x). O painel do MLP TCC2 evidencia, de forma inequívoca, que o modelo previu valores aproximadamente constantes (em torno de 4.000 kWh), sem aderência ao comportamento real da série.
+
+![Figura 13 — Dispersão real vs previsto para todos os modelos](figures/05_results_comparison_fig02.png)
+
+**Figura 13 — Gráficos de dispersão (Valor Real × Valor Previsto) para os cinco modelos avaliados. A linha tracejada representa a previsão perfeita (y = x). Fonte: O autor.**
+
 A comparação entre o MLP TCC2 (R² = −0,108) e o MLP com recursos expandidos (R² = 0,99996) é o resultado central desse estudo. Ambos os modelos utilizam o mesmo algoritmo — rede neural MLP — e a mesma base de dados, diferindo apenas no conjunto de recursos de entrada (6 versus 20 variáveis) e na configuração de validação cruzada. O ganho relativo de 1.026,3% em R² evidencia que a engenharia de recursos é a principal alavanca de desempenho preditivo nesse contexto.
 
+A Figura 14 apresenta o ranking de importância de variáveis para o *Random Forest* e para o XGBoost, e a Figura 15 apresenta a análise SHAP (*SHapley Additive exPlanations*) para o *Random Forest*, que quantifica a contribuição média de cada recurso sobre as previsões individuais do conjunto de teste.
+
+![Figura 14 — Feature Importance para Random Forest e XGBoost](figures/05_results_comparison_fig04.png)
+
+**Figura 14 — Importância de variáveis para o *Random Forest* (esquerda) e o XGBoost (direita). Fonte: O autor.**
+
+![Figura 15 — SHAP Feature Importance para o Random Forest](figures/05_results_comparison_fig05.png)
+
+**Figura 15 — Análise SHAP do *Random Forest*: impacto médio absoluto de cada recurso sobre as previsões do conjunto de teste. Fonte: O autor.**
+
 Nesse sentido, os recursos de maior poder preditivo, conforme revelado pelas análises de importância do *Random Forest* e do XGBoost, são `energy_lag1` e `delta_energy`, que capturam respectivamente o nível de consumo imediatamente anterior e a variação recente. A `roll_mean_6h` também contribui significativamente, incorporando a tendência de curto prazo da série. Esses três recursos concentram mais de 99% da importância total nos dois modelos baseados em árvore, o que é consistente com a alta autocorrelação da série (energy_lag1 com r = 0,895 com o alvo).
+
+A Figura 16 apresenta o histograma de resíduos para cada modelo, confirmando com evidência visual a superioridade dos modelos com recursos expandidos. O MLP TCC2 apresenta resíduos com média de 910 kWh e desvio padrão de 2.771 kWh — distribuição fortemente assimétrica e afastada do zero. Em contraste, o MLP expandido apresenta resíduos com média de −0,03 kWh e desvio padrão de 17,49 kWh, configurando uma distribuição gaussiana centrada em zero e de amplitude estreita.
+
+![Figura 16 — Histograma de resíduos por modelo](figures/05_results_comparison_fig03.png)
+
+**Figura 16 — Histograma dos resíduos de previsão (Valor Real − Valor Previsto) para os cinco modelos. Os parâmetros μ e σ são indicados no título de cada painel. Fonte: O autor.**
 
 Conforme argumentam Deb et al. (2017), as previsões de energia com redes neurais que correlacionaram dados históricos de energia, temperatura e população resultaram em R² de 0,81. O presente estudo, ao incorporar variáveis de atraso de múltiplas ordens e médias móveis, supera esse resultado com todos os quatro modelos avançados.
 
@@ -379,6 +463,12 @@ O resultado de R² = 0,868 obtido anteriormente com essa configuração não foi
 Segundo Pedregosa et al. (2011), a validação cruzada temporal é a abordagem correta para dados em que a ordenação temporal é relevante. Nesse sentido, o `TimeSeriesSplit` garante que o modelo seja avaliado apenas sobre instâncias posteriores às do treino, reproduzindo com maior fidelidade o cenário de aplicação real. A magnitude da diferença observada — de R² = 0,868 para R² = −0,108 com o mesmo modelo — é, por si só, uma evidência empírica relevante sobre os riscos de não respeitar a temporalidade nos processos de validação cruzada em séries temporais.
 
 ### 6.4 Comparação entre os modelos avançados
+
+A Figura 17 apresenta as previsões de todos os modelos sobrepostas ao consumo real ao longo dos primeiros sete dias do conjunto de teste. Nela, a linha azul horizontal do MLP TCC2 evidencia graficamente o comportamento de previsão constante que caracteriza o modelo sem capacidade de generalização temporal. Em contrapartida, os quatro modelos com recursos expandidos acompanham com precisão as variações horárias, diárias e os eventos de queda de consumo durante o fim de semana.
+
+![Figura 17 — Comparação das previsões de todos os modelos nos primeiros 7 dias do conjunto de teste](figures/05_results_comparison_fig08.png)
+
+**Figura 17 — Previsão versus consumo real nos primeiros 7 dias do conjunto de teste para todos os modelos avaliados. Fonte: O autor.**
 
 Embora os quatro modelos avançados tenham apresentado desempenho elevado, há diferenças notáveis entre eles que merecem análise.
 
