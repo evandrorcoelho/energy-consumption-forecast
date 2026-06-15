@@ -15,6 +15,9 @@ data/processed/df_full.csv
 data/processed/df_site40_merged.csv
 data/processed/df_features.csv
 
+# Large files
+tcc_pos_graduacao_apresentacao_evandrocoelho.pptx
+
 # Python
 __pycache__/
 *.py[cod]
